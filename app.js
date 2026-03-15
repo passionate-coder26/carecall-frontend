@@ -3,13 +3,12 @@ const path = require("path");
 
 const app = express();
 
-app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "views", "home.html"));
+    res.sendFile("home.html", { root: path.join(__dirname, "views") });
 });
 
 app.listen(8080, () => {
-    console.log("Server is running on 8080!");
+    console.log("Server running on http://localhost:8080");
 });

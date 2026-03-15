@@ -148,5 +148,112 @@
         </div>
     </div>
     
+<script>
+const API = "https://vella-nonrevenue-fallalishly.ngrok-free.dev";
+
+async function loadDashboard() {
+    try {
+        // ── Load today's summary ──
+        const todayRes = await fetch(`${API}/today`);
+        const todayData = await todayRes.json();
+        const summary = todayData.summary;
+
+        if (summary) {
+            // Mood
+            const moodMap = {
+                "good":       { label: "Happy",    energy: "85%", speech: "Normal",  engagement: "High"   },
+                "neutral":    { label: "Okay",     energy: "60%", speech: "Slower",  engagement: "Medium" },
+                "concerning": { label: "Low",      energy: "35%", speech: "Quiet",   engagement: "Low"    }
+            };
+            const mood = moodMap[summary.mood] || moodMap["neutral"];
+
+            // Update mood card
+            document.querySelector(".moodTag").textContent = mood.label;
+            document.querySelector(".energyTag").textContent = mood.energy;
+            document.querySelector(".speechTag").textContent = mood.speech;
+            document.querySelector(".engagementTag").textContent = mood.engagement;
+
+            // Update progress bars width
+            document.querySelector(".moodfill").style.width = 
+                summary.mood === "good" ? "90%" : summary.mood === "neutral" ? "60%" : "30%";
+            document.querySelector(".energyfill").style.width = mood.energy;
+            document.querySelector(".speechfill").style.width = 
+                summary.mood === "good" ? "85%" : summary.mood === "neutral" ? "55%" : "25%";
+            document.querySelector(".engagementfill").style.width = 
+                summary.turn_count >= 10 ? "90%" : summary.turn_count >= 5 ? "60%" : "30%";
+
+            // Call duration from turn count
+            const mins = Math.floor(summary.turn_count * 6 / 60);
+            const secs = (summary.turn_count * 6) % 60;
+            document.querySelector(".durationTag").textContent = `${mins}m ${secs}s`;
+
+            // AI Insight
+            const insightMap = {
+                "good":       "More energetic today",
+                "neutral":    "Seems okay today",
+                "concerning": "Quieter than usual today"
+            };
+            document.querySelector(".aiInsight p").textContent = 
+                insightMap[summary.mood] || "Check in today";
+        }
+
+        // ── Load alert status ──
+        const alertRes = await fetch(`${API}/alert-status`);
+        const alertData = await alertRes.json();
+
+        // Update unread count
+        const unreadEl = document.querySelector(".vmDesc p");
+        if (alertData.alert) {
+            unreadEl.textContent = "⚠️ " + alertData.message;
+            unreadEl.style.color = "#e53e3e";
+        } else {
+            unreadEl.textContent = "✅ Nani is doing well today";
+            unreadEl.style.color = "green";
+        }
+
+        // ── Load sessions for messages ──
+        const sessionsRes = await fetch(`${API}/sessions`);
+        const sessionsData = await sessionsRes.json();
+        const sessions = sessionsData.sessions.slice(0, 3);
+
+        if (sessions.length > 0) {
+            const msgList = document.querySelector(".msgList");
+            msgList.innerHTML = sessions.map((s, i) => {
+                const date = s.date ? s.date.slice(0, 10) : "Recent";
+                const moodEmoji = {
+                    "good": "😊", "neutral": "😐", "concerning": "😟"
+                }[s.mood] || "😐";
+                const msg = s.consent 
+                    ? "She shared a message with you today"
+                    : `Mood: ${s.mood || "neutral"} — ${s.turn_count || 0} turns`;
+                const isUnread = i === 0;
+
+                return `
+                <div class="msgCard ${i === sessions.length-1 ? 'last' : ''}">
+                    <div class="msgContent">
+                        <div class="msgIcon">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div class="msgInfo">
+                            <p class="content">${moodEmoji} ${msg}</p>
+                            <p class="time">${date}</p>
+                        </div>
+                    </div>
+                    ${isUnread ? '<div class="msgStatus"><p class="unread">1</p></div>' : ''}
+                </div>`;
+            }).join("");
+        }
+
+        console.log("✅ Dashboard loaded with real data!");
+
+    } catch (err) {
+        console.log("⚠️ API not reachable, showing default data:", err);
+    }
+}
+
+// Load when page opens
+loadDashboard();
+</script>
+
 </body>
 </html>
