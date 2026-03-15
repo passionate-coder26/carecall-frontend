@@ -323,3 +323,151 @@ body {
 .viewBtn button:hover {
     opacity: 0.9;
 }
+
+.alertBanner {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-left: 5px solid #ff5722;
+    padding: 12px 20px;
+    margin: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #333;
+}
+
+/* ── Call History Section ── */
+.historySection {
+    padding: 40px;
+    background: transparent;
+}
+
+.historySection h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #3a3a3a;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+}
+
+.historyCard {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 14px;
+    padding: 14px 20px;
+    margin-bottom: 10px;
+    backdrop-filter: blur(12px);
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.historyCard:hover {
+    background: rgba(255, 255, 255, 0.85);
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.historyCard .mood {
+    font-size: 24px;
+    margin-right: 18px;
+    min-width: 35px;
+}
+
+.historyCard .date {
+    color: #555;
+    font-size: 14px;
+    font-weight: 600;
+    min-width: 110px;
+}
+
+.historyCard .turns {
+    color: #888;
+    font-size: 13px;
+    flex: 1;
+    margin-left: 16px;
+}
+
+.historyCard .mood-label {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 16px;
+    border-radius: 20px;
+    text-transform: capitalize;
+}
+
+.historyCard[data-mood="good"] .mood-label {
+    background: rgba(34, 197, 94, 0.15);
+    color: #16a34a;
+    border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.historyCard[data-mood="neutral"] .mood-label {
+    background: rgba(234, 179, 8, 0.15);
+    color: #b45309;
+    border: 1px solid rgba(234, 179, 8, 0.4);
+}
+
+.historyCard[data-mood="concerning"] .mood-label {
+    background: rgba(239, 68, 68, 0.15);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.historyCard .consent {
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(244, 63, 94, 0.12);
+    color: #f43f5e;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    margin-left: 10px;
+    white-space: nowrap;
+}
+
+/* ── Trend Section ── */
+.trendSection {
+    padding: 30px 40px;
+    background: transparent;
+}
+
+.trendSection h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #3a3a3a;
+    margin-bottom: 20px;
+}
+
+#moodChart {
+    background: rgba(255,255,255,0.65);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(255,255,255,0.9);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* ── Alert Banner ── */
+.alertBanner {
+    background: rgba(254, 226, 226, 0.85);
+    border-left: 5px solid #f43f5e;
+    padding: 14px 24px;
+    margin: 10px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #7f1d1d;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 8px rgba(244,63,94,0.15);
+}
+
+.alertBanner strong {
+    color: #dc2626;
+}
+
+.alertBanner small {
+    color: #b91c1c;
+    display: block;
+    margin-top: 4px;
+}
+

@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CareCall.com</title>
     <link rel="stylesheet" href="/css/home.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" 
-          integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" 
-          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
+        integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
     <div class="header">
         <div class="headerBgImg">
@@ -16,19 +19,23 @@
         </div>
         <div class="navbar">
             <div class="nav-buttons">
-                <a href="">Call History</a>
-                <a href="">Alerts</a>
+                <a href="#call-history">Call History</a>
+                <a href="#alerts">Alerts</a>
             </div>
             <div class="nav-logo">
                 <p>CareCall</p>
             </div>
             <div class="nav-buttons">
-                <a href="">Insights</a>
+                <a href="#insights">Insights</a>
                 <a href="">Research</a>
             </div>
         </div>
     </div>
-    
+
+    <div id="alertBanner" style="display:none;" class="alertBanner">
+        <span id="alertText"></span>
+    </div>
+
     <div class="hero">
         <div class="profile">
             <div class="basicInfo">
@@ -47,7 +54,7 @@
                         <p class="fillTitle">Mood</p>
                         <div class="moodTag">Happy</div>
                     </div>
-                    
+
                     <div class="moodbars">
                         <div class="moodfill"></div>
                     </div>
@@ -58,7 +65,7 @@
                         <p class="fillTitle">Energy</p>
                         <div class="energyTag">76%</div>
                     </div>
-                    
+
                     <div class="energybar">
                         <div class="energyfill"></div>
                     </div>
@@ -79,7 +86,7 @@
                         <p class="fillTitle">Engagement</p>
                         <div class="engagementTag">High</div>
                     </div>
-                    
+
                     <div class="engagementbar">
                         <div class="engagementfill"></div>
                     </div>
@@ -139,97 +146,107 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="viewBtn">
                     <button>View All</button>
                 </div>
             </div>
-            
+
         </div>
     </div>
-    
-<script>
-const API = "https://vella-nonrevenue-fallalishly.ngrok-free.dev";
 
-async function loadDashboard() {
-    try {
-        // ── Load today's summary ──
-        const todayRes = await fetch(`${API}/today`);
-        const todayData = await todayRes.json();
-        const summary = todayData.summary;
+    <div class="trendSection" style="margin-top: 2.5rem;" id="insights">
+        <h3>7-Day Mood Trend</h3>
+        <canvas id="moodChart" width="400" height="150"></canvas>
+    </div>
 
-        if (summary) {
-            // Mood
-            const moodMap = {
-                "good":       { label: "Happy",    energy: "85%", speech: "Normal",  engagement: "High"   },
-                "neutral":    { label: "Okay",     energy: "60%", speech: "Slower",  engagement: "Medium" },
-                "concerning": { label: "Low",      energy: "35%", speech: "Quiet",   engagement: "Low"    }
-            };
-            const mood = moodMap[summary.mood] || moodMap["neutral"];
+    <div class="historySection" id="call-history">
+        <h3>Call History</h3>
+        <div id="callHistory"></div>
+    </div>
 
-            // Update mood card
-            document.querySelector(".moodTag").textContent = mood.label;
-            document.querySelector(".energyTag").textContent = mood.energy;
-            document.querySelector(".speechTag").textContent = mood.speech;
-            document.querySelector(".engagementTag").textContent = mood.engagement;
+    <script>
+        const API = "http://localhost:8000";
 
-            // Update progress bars width
-            document.querySelector(".moodfill").style.width = 
-                summary.mood === "good" ? "90%" : summary.mood === "neutral" ? "60%" : "30%";
-            document.querySelector(".energyfill").style.width = mood.energy;
-            document.querySelector(".speechfill").style.width = 
-                summary.mood === "good" ? "85%" : summary.mood === "neutral" ? "55%" : "25%";
-            document.querySelector(".engagementfill").style.width = 
-                summary.turn_count >= 10 ? "90%" : summary.turn_count >= 5 ? "60%" : "30%";
+        async function loadDashboard() {
+            try {
+                // ── Load today's summary ──
+                const todayRes = await fetch(`${API}/today`);
+                const todayData = await todayRes.json();
+                const summary = todayData.summary;
 
-            // Call duration from turn count
-            const mins = Math.floor(summary.turn_count * 6 / 60);
-            const secs = (summary.turn_count * 6) % 60;
-            document.querySelector(".durationTag").textContent = `${mins}m ${secs}s`;
+                if (summary) {
+                    // Mood
+                    const moodMap = {
+                        "good": { label: "Happy", energy: "85%", speech: "Normal", engagement: "High" },
+                        "neutral": { label: "Okay", energy: "60%", speech: "Slower", engagement: "Medium" },
+                        "concerning": { label: "Low", energy: "35%", speech: "Quiet", engagement: "Low" }
+                    };
+                    const mood = moodMap[summary.mood] || moodMap["neutral"];
 
-            // AI Insight
-            const insightMap = {
-                "good":       "More energetic today",
-                "neutral":    "Seems okay today",
-                "concerning": "Quieter than usual today"
-            };
-            document.querySelector(".aiInsight p").textContent = 
-                insightMap[summary.mood] || "Check in today";
-        }
+                    // Update mood card
+                    document.querySelector(".moodTag").textContent = mood.label;
+                    document.querySelector(".energyTag").textContent = mood.energy;
+                    document.querySelector(".speechTag").textContent = mood.speech;
+                    document.querySelector(".engagementTag").textContent = mood.engagement;
 
-        // ── Load alert status ──
-        const alertRes = await fetch(`${API}/alert-status`);
-        const alertData = await alertRes.json();
+                    // Update progress bars width
+                    document.querySelector(".moodfill").style.width =
+                        summary.mood === "good" ? "90%" : summary.mood === "neutral" ? "60%" : "30%";
+                    document.querySelector(".energyfill").style.width = mood.energy;
+                    document.querySelector(".speechfill").style.width =
+                        summary.mood === "good" ? "85%" : summary.mood === "neutral" ? "55%" : "25%";
+                    document.querySelector(".engagementfill").style.width =
+                        summary.turn_count >= 10 ? "90%" : summary.turn_count >= 5 ? "60%" : "30%";
 
-        // Update unread count
-        const unreadEl = document.querySelector(".vmDesc p");
-        if (alertData.alert) {
-            unreadEl.textContent = "⚠️ " + alertData.message;
-            unreadEl.style.color = "#e53e3e";
-        } else {
-            unreadEl.textContent = "✅ Nani is doing well today";
-            unreadEl.style.color = "green";
-        }
+                    // Call duration from turn count
+                    const mins = Math.floor(summary.turn_count * 6 / 60);
+                    const secs = (summary.turn_count * 6) % 60;
+                    document.querySelector(".durationTag").textContent = `${mins}m ${secs}s`;
 
-        // ── Load sessions for messages ──
-        const sessionsRes = await fetch(`${API}/sessions`);
-        const sessionsData = await sessionsRes.json();
-        const sessions = sessionsData.sessions.slice(0, 3);
+                    // AI Insight
+                    const insightMap = {
+                        "good": "More energetic today",
+                        "neutral": "Seems okay today",
+                        "concerning": "Quieter than usual today"
+                    };
+                    document.querySelector(".aiInsight p").textContent =
+                        insightMap[summary.mood] || "Check in today";
+                }
 
-        if (sessions.length > 0) {
-            const msgList = document.querySelector(".msgList");
-            msgList.innerHTML = sessions.map((s, i) => {
-                const date = s.date ? s.date.slice(0, 10) : "Recent";
-                const moodEmoji = {
-                    "good": "😊", "neutral": "😐", "concerning": "😟"
-                }[s.mood] || "😐";
-                const msg = s.consent 
-                    ? "She shared a message with you today"
-                    : `Mood: ${s.mood || "neutral"} — ${s.turn_count || 0} turns`;
-                const isUnread = i === 0;
+                // ── Load alert status ──
+                const alertRes = await fetch(`${API}/alert-status`);
+                const alertData = await alertRes.json();
 
-                return `
-                <div class="msgCard ${i === sessions.length-1 ? 'last' : ''}">
+                // Update unread count
+                const unreadEl = document.querySelector(".vmDesc p");
+                if (alertData.alert) {
+                    unreadEl.textContent = "⚠️ " + alertData.message;
+                    unreadEl.style.color = "#e53e3e";
+                } else {
+                    unreadEl.textContent = "✅ Nani is doing well today";
+                    unreadEl.style.color = "green";
+                }
+
+                // ── Load sessions for messages ──
+                const sessionsRes = await fetch(`${API}/sessions`);
+                const sessionsData = await sessionsRes.json();
+                const sessions = sessionsData.sessions.slice(0, 3);
+
+                if (sessions.length > 0) {
+                    const msgList = document.querySelector(".msgList");
+                    msgList.innerHTML = sessions.map((s, i) => {
+                        const date = s.date ? s.date.slice(0, 10) : "Recent";
+                        const moodEmoji = {
+                            "good": "😊", "neutral": "😐", "concerning": "😟"
+                        }[s.mood] || "😐";
+                        const msg = s.consent
+                            ? "She shared a message with you today"
+                            : `Mood: ${s.mood || "neutral"} — ${s.turn_count || 0} turns`;
+                        const isUnread = i === 0;
+
+                        return `
+                <div class="msgCard ${i === sessions.length - 1 ? 'last' : ''}">
                     <div class="msgContent">
                         <div class="msgIcon">
                             <i class="fa-solid fa-envelope"></i>
@@ -241,19 +258,116 @@ async function loadDashboard() {
                     </div>
                     ${isUnread ? '<div class="msgStatus"><p class="unread">1</p></div>' : ''}
                 </div>`;
-            }).join("");
+                    }).join("");
+                }
+
+                console.log("✅ Dashboard loaded with real data!");
+
+            } catch (err) {
+                console.log("⚠️ API not reachable, showing default data:", err);
+            }
         }
 
-        console.log("✅ Dashboard loaded with real data!");
+        async function loadMoodChart() {
+            const res = await fetch(`${API}/mood-trend`);
+            const data = await res.json();
+            const trend = data.trend;
 
-    } catch (err) {
-        console.log("⚠️ API not reachable, showing default data:", err);
-    }
-}
+            const ctx = document.getElementById('moodChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: trend.map(t => t.date),
+                    datasets: [{
+                        label: 'Mood Score',
+                        data: trend.map(t => t.score),
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76,175,80,0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: trend.map(t =>
+                            t.mood === 'good' ? '#4CAF50' :
+                                t.mood === 'neutral' ? '#FFA500' : '#F44336'
+                        ),
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: val =>
+                                    val === 85 ? '😊 Good' :
+                                        val === 55 ? '😐 Okay' :
+                                            val === 25 ? '😟 Low' : ''
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
 
-// Load when page opens
-loadDashboard();
-</script>
+        async function loadAlert() {
+            const res = await fetch(`${API}/alert-status`);
+            const data = await res.json();
+            if (data.alert) {
+                const banner = document.getElementById('alertBanner');
+                const text = document.getElementById('alertText');
+                banner.style.display = 'block';
+                text.innerHTML = `⚠️ <strong>Alert:</strong> ${data.message} — Consider giving Nani a call today. <br><small>🔒 No conversation details shared.</small>`;
+            }
+        }
+
+        async function loadCallHistory() {
+            const res = await fetch(`${API}/sessions`);
+            const data = await res.json();
+            const sessions = data.sessions;
+
+            const container = document.getElementById('callHistory');
+            container.innerHTML = sessions.map(s => {
+                const emoji = {
+                    'good': '😊', 'neutral': '😐', 'concerning': '😟'
+                }[s.mood] || '😐';
+                const date = s.date ? s.date.slice(0, 10) : 'Recent';
+                const turns = s.turn_count || 0;
+                const consent = s.consent ?
+                    '<span class="consent">✓ Shared message</span>' : '';
+
+                return `
+        <div class="historyCard" data-mood="${s.mood || 'neutral'}">
+            <span class="mood">${emoji}</span>
+            <span class="date">${date}</span>
+            <span class="turns">${turns} turns</span>
+            <span class="mood-label">${s.mood || 'neutral'}</span>
+            ${consent}
+        </div>`;
+            }).join('');
+        }
+
+        loadCallHistory();
+
+        loadAlert();
+
+        loadMoodChart();
+
+        loadDashboard();
+
+        // Auto refresh every 30 seconds
+        setInterval(() => {
+            loadDashboard();
+            loadAlert();
+            loadCallHistory();
+            console.log('🔄 Dashboard refreshed');
+        }, 30000);
+    </script>
 
 </body>
+
 </html>
