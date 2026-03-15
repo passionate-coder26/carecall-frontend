@@ -1,0 +1,325 @@
+body {
+    margin:0;
+}
+
+.header {
+    width: 100%;
+    height: 650px;
+    overflow: hidden;
+    position: relative;
+}
+
+.header img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    filter: blur(10px);
+    transform: scale(1.1);
+}
+
+.header::after {
+    height: 100%;
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.25);
+}
+
+.navbar {
+    position: absolute;
+    top: 0;
+    width: 80%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-self: center;
+
+    background: rgba(44, 43, 43, 0.35);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+
+    border-radius: 35px;
+    margin-top: 20px;
+
+    padding: 0 20px;
+    z-index: 9999;
+}
+
+.nav-logo {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    font-weight: 650;
+    font-size: 1.1rem;
+    color: rgb(246, 250, 216);
+    font-style: italic;
+}
+
+.nav-buttons {
+    width: 20%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-buttons a {
+    text-decoration: none;
+    font-size: 0.85rem;
+    color: #f4f4f5;
+    font-weight: 600;
+    transition: 0.2s ease-in-out;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.nav-buttons a:hover {
+    color: #ffd7b5;
+}
+
+.hero {
+    width: 90%;
+    display:flex;
+    justify-content:center;
+    align-items: stretch;
+    justify-self: center;
+    gap:100px;
+    margin-top:-515px;  
+}
+
+.profile, .viewMsgs {
+    width: 30%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+.basicInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-weight: 600;
+    font-size: 0.95rem;
+
+    margin-bottom: 18px;
+
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(14px);
+
+    border-radius: 12px;
+    padding: 20px 25px;
+    
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.biDesc, .vmTitle {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+}
+
+.aiInsight {
+    width: 50%;
+    display: flex;
+    justify-content: end;
+}
+
+.biDesc p, .vmTitle p {
+    margin: 0;
+    font-weight: 600;
+}
+
+.biMood, .recent {
+    font-size: 0.8rem;
+    color: #444;
+}
+
+.moodInfo, .msgsBox {
+    background: rgba(255,255,255,0.55);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-radius: 10px;
+    
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 0.9rem;
+}
+
+.moodInfo {
+    padding: 20px 25px 10px 25px;
+}
+
+.moodToday, .energyToday, .speechToday, .engagementToday, .callDuration {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    margin-bottom: 20px;
+}
+
+.moodbars, .energybar, .speechbar, .engagementbar {
+    width: 100%;
+    height: 14px;
+    background: #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 9px;
+}
+
+.moodfill, .energyfill, .speechfill, .engagementfill {
+    height: 100%;
+    background: linear-gradient(90deg,#22c55e,#4ade80);
+}
+
+.moodfill, .speechfill {
+    width: 100%;
+}
+
+.energyfill {
+    width: 76%;
+}
+
+.engagementfill {
+    width: 90%;
+}
+
+.fillDiv {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fillTitle {
+    margin: 0;
+}
+
+.msgsBox {
+    position: relative;
+    padding: 10px 25px 25px 25px;
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+.msgList {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.msgsBox::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:0;
+
+    width:100%;
+    height:100px;
+
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0),
+        rgba(255,255,255,0.95)
+    );
+
+    pointer-events:none;
+    z-index:1;
+}
+
+.msgCard {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: rgba(248, 242, 242, 0.35);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+
+    padding: 10px 20px;
+    border-radius: 12px;
+    margin-top: 15px;
+
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+.msgCard:hover {
+    background: rgba(228, 222, 222, 0.35);
+}
+
+.msgContent {
+    width: 85%;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 10px;
+}
+
+.msgIcon {
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.msgInfo p {
+    margin: 0;
+}
+
+.content {
+    color: #222;
+}
+
+.time {
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.msgStatus {
+    width: 10%;
+    display: flex;
+    justify-content: right;
+}
+
+.msgStatus p {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #22c55e;
+    border-radius: 50%;
+    padding: 3px;
+}
+
+.viewBtn {
+    position: absolute;
+    bottom: 13px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    z-index: 2;
+}
+
+.viewBtn button {
+    width: 100%;
+    background: black;
+    padding: 10px;
+    border-radius: 20px;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.1s ease-in;
+}
+
+.viewBtn button:hover {
+    opacity: 0.9;
+}
